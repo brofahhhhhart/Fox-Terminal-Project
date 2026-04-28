@@ -4,9 +4,10 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Esta linha abaixo resolve o erro 100 que apareceu no seu print
+    # Estas variáveis abaixo são os "antídotos" para o erro 100 e Node.js
     env:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout Código
@@ -17,19 +18,19 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Instalar Dependências
+      - name: Instalar Dependências do Android
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --user --upgrade Cython==0.29.33 buildozer
 
-      - name: Gerar APK
+      - name: Rodar o Buildozer (A mágica acontece aqui)
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Aceita as licenças do Android SDK automaticamente
+          # O 'yes' aceita todas as licenças do Android sozinho
           yes | buildozer android debug
 
-      - name: Upload APK
+      - name: Salvar o APK finalizado
         uses: actions/upload-artifact@v4
         with:
           name: FoxTerminal-APK
