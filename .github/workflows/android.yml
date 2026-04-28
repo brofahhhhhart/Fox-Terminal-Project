@@ -4,26 +4,32 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    # Força o ambiente a aceitar as versões de transição de 2026
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-      - name: Setup Python
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Instalar Ferramentas Android
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip3 install --user --upgrade Cython==0.29.33 buildozer
 
-      - name: Build with Buildozer
+      - name: Gerar APK com Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          buildozer android debug
+          # O comando 'yes' aceita as licenças do Android automaticamente
+          yes | buildozer android debug
 
-      - name: Upload APK
+      - name: Subir Arquivo APK
         uses: actions/upload-artifact@v4
         with:
           name: FoxTerminal-APK
