@@ -22,9 +22,6 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Limpa resíduos da última tentativa para não dar erro
-          buildozer android clean
-          # Agora sim, faz o build real
           yes | buildozer android debug
 
       - name: Upload APK
