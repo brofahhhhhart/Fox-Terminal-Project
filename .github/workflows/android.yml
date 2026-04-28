@@ -18,38 +18,15 @@ jobs:
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --user --upgrade Cython==0.29.33 buildozer
-name: Build APK
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install SDK dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip install --user --upgrade Cython==0.29.33 buildozer
 
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
+          # Limpa resíduos da última tentativa para não dar erro
+          buildozer android clean
+          # Agora sim, faz o build real
           yes | buildozer android debug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: FoxTerminal-APK
-          path: bin/*.apk
-          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
