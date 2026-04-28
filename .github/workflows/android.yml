@@ -15,9 +15,15 @@ jobs:
       - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.10
+          python-version: "3.10"
 
-      - name: ⚙️ Install dependencies
+      - name: ☕ Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: ⚙️ Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -35,12 +41,12 @@ jobs:
             libffi-dev \
             libssl-dev
 
-      - name: 📦 Install Buildozer
+      - name: 📦 Install Python dependencies
         run: |
-          pip install --upgrade pip
-          pip install buildozer cython
+          python -m pip install --upgrade pip
+          pip install cython buildozer
 
-      - name: 🔧 Build APK
+      - name: 🏗️ Build APK
         run: |
           buildozer android debug
 
