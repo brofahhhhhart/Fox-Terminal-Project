@@ -1,14 +1,9 @@
 name: Build APK
-on: push
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Estas duas linhas abaixo são o que o GitHub está exigindo nos seus prints
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
     steps:
       - name: Checkout Código
         uses: actions/checkout@v4
@@ -18,18 +13,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Instalar Ferramentas
+      - name: Instalar Dependencias
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --user --upgrade Cython==0.29.33 buildozer
 
-      - name: Criar APK com Buildozer
+      - name: Build com Buildozer
+        env:
+          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         run: |
           export PATH=$PATH:$HOME/.local/bin
           yes | buildozer android debug
 
-      - name: Upload do Arquivo Final
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: FoxTerminal-APK
