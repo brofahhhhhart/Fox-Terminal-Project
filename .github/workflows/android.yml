@@ -4,24 +4,29 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    # Esta linha abaixo resolve o erro 100 que apareceu no seu print
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
-      - name: Setup Python
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Instalar Dependências
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --user --upgrade Cython==0.29.33 buildozer
 
-      - name: Build with Buildozer
+      - name: Gerar APK
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Isso aceita as licenças e começa a mágica
+          # Aceita as licenças do Android SDK automaticamente
           yes | buildozer android debug
 
       - name: Upload APK
