@@ -3,26 +3,23 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout Código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Instalar Dependencias
+      - name: Install SDK dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --user --upgrade Cython==0.29.33 buildozer
 
-      - name: Build com Buildozer
-        env:
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
           yes | buildozer android debug
